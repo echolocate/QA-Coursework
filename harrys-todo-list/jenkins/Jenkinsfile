@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    environment {
+        CREATE_SCHEMA = "true"
+        RUN_APP = "false"
+        DATABASE_URI = credentials("DATABASE_URI")
+    }
+    stages {
+        stage('Setup') {
+            steps {
+                sh "bash jenkins/setup.sh"
+            }
+        }
+        stage('Test') {
+            steps {
+                sh "bash jenkins/test.sh"
+            }
+        }
+        stage('Create Schema') {
+            steps {
+                script{
+                    if (env.CREATE_SCHEMA =="true") {
+                        sh "bash jenkins/create_schema.sh"                        
+                    }
+                }
+            }
+        }
+        stage('Run') {
+            steps {
+                script{
+                    if (env.RUN_APP =="true") {
+                        sh "bash jenkins/run_app.sh"
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            junit 'junit_report.xml'
+            cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+        }
+    }
+}

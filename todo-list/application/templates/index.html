@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    {% for task in all_tasks %}
+        <p>
+            Task ID: {{task.id}}<br>
+            Task Description {{ task.description }}<br>
+            {% if task.completed == True %}
+            Completed Task!
+            {% else %}
+            Incomplete Task
+            {% endif %}
+
+            
+        </p>
+    {% endfor %}
+{% endblock body %}

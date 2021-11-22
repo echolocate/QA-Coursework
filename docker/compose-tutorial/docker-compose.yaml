@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+ nginx:
+   image: nginx:alpine
+   ports:
+   - target: 8000
+     published: 8000
